@@ -55,6 +55,6 @@ def get_basic_features(df, ordinal, categorical,date_manip ,cont):
                                                     ('one_hot',one_hot)])),
                         ('cleanup',cleanup_transformer.cleanup_transformer())])
 
-    return features.transform(df)
+    return features,features.transform(df)
 
     # try class sklearn.preprocessing.PolynomialFeatures(degree=2, interaction_only=False, include_bias=True)
