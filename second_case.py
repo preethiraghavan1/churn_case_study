@@ -32,6 +32,21 @@ def format_data(df, train = 1):
     dummy_names = list(city_dummies)
     df[dummy_names] = city_dummies
 
+    df.price_proxy = df.avg_dist * df.avg_surge
+
+    # calculate the means
+    df_by_city = df.groupby('city').mean()
+    df_by_city = df_by_city.reset_index()
+
+    # put the means into original df
+    df_mean = pd.merge(df, df_by_city, on = 'city')
+    df['avg_dist_diff'] = df_mean['avg_dist_x'] - df_mean['avg_dist_y']
+    df['avg_rating_by_driver_diff'] = df_mean['avg_rating_by_driver_x'] - df_mean['avg_rating_by_driver_y']
+    df['avg_rating_of_driver_diff'] = df_mean['avg_rating_of_driver_x'] - df_mean['avg_rating_of_driver_y']
+    df['avg_surge_diff'] = df_mean['avg_surge_x'] - df_mean['avg_surge_y']
+    df['surge_pct_diff'] = df_mean['surge_pct_x'] - df_mean['surge_pct_y']
+    #df['price_proxy_diff'] = df_mean['price_proxy_x'] - df_mean['price_proxy_y']
+
     phone_dummies = pd.get_dummies(df.phone)
     dummy_names = list(phone_dummies)
     df[dummy_names] = phone_dummies
@@ -79,8 +94,7 @@ def score_test_data(X_test, y_predict):
 if __name__ == '__main__':
     df = load_data('Churn/churn_train.csv')
     X, y = format_data(df, train = 1)
-    independent_vars = ['avg_dist', 'avg_rating_by_driver', 'avg_rating_of_driver', 'avg_surge', 'trips_in_first_30_days', 'surge_pct', 'Astapor', "King's Landing", 'iPhone', 'weekend']
-
+    independent_vars = ['avg_dist_diff', 'avg_rating_by_driver', 'avg_rating_of_driver', 'avg_surge_diff', 'trips_in_first_30_days', 'surge_pct_diff', 'iPhone', 'luxury_car_user', 'Astapor', "King's Landing"]
 
     # test forest and logit models
     print 'Random Forest'
@@ -99,7 +113,7 @@ if __name__ == '__main__':
 
     print '------------'
     print 'AdaBoost'
-    model = AdaBoostClassifier(n_estimators = 100, learning_rate = 0.1)
+    model = AdaBoostClassifier(n_estimators = 100, learning_rate = 1)
     adaboost_roc = test_model(model, X[independent_vars], y, independent_vars)
     boost_feature = model.feature_importances_
     boost_feature_scale = boost_feature/max(boost_feature)
