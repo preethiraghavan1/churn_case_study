@@ -56,8 +56,8 @@ def run_knn(X_train, X_test, y_train, y_test):
 
 def run_randomforestclassifier(X_train, X_test, y_train, y_test):
     param_grid = [
-    {'n_estimators':[50],'criterion':['entropy','gini'],'max_depth':[None, 5,10],
-    'min_samples_split':[7,10,15], 'oob_score':[True, False]}]
+    {'n_estimators':[50, 300],'criterion':['entropy','gini'],'max_depth':[None, 5,10],
+    'min_samples_split':[7]}]
     clf = GridSearchCV(RandomForestClassifier(), param_grid)
     clf.fit(X_train, y_train)
 

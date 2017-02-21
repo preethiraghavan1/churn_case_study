@@ -82,16 +82,12 @@ def get_poly_features(df, ordinal, categorical,date_manip ,cont):
                         ('lab_enc', categorical_transformer.label_transformer()),
                         ('one_hot', ModelTransformer.ModelTransformer(OneHotEncoder(sparse=False)))])
 
-    select_features = Pipeline([('feat_imp',FeatureUnion([#('xtra_tree', SelectFromModel(ExtraTreesClassifier())),
-                                                      ('lin',SelectFromModel(LinearSVC(penalty="l1", dual=False)))]))])
-
 
     features = Pipeline([('parallel', FeatureUnion([('date',date_pip),
                                                     ('continuous',continuous),
                                                     ('ordinal_pip',ordinal_pip),
                                                     ('one_hot',one_hot)])),
                         ('poly',ModelTransformer.ModelTransformer(PolynomialFeatures(degree=2))),
-                        ('select_features',select_features),
                         ('cleanup',cleanup_transformer.cleanup_transformer())])
 
     return features, features.transform(df)
