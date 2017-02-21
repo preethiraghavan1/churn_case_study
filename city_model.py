@@ -5,7 +5,7 @@ import numpy as np
 import models
 import features
 
-# Create a dataframe
+# Create a dataframe 
 df = pd.read_csv('Data/churn.csv')
 df.head()
 
