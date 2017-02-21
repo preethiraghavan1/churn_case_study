@@ -53,7 +53,8 @@ class kfold_classification_model:
         print "precision ", precision
         print "recall ", recall
 
-        fpr, tpr,thres = roc_curve(y_test, y_pred)
+        y_pred_proba = self.model.predict_proba(X_test)
+        fpr, tpr,thres = roc_curve(y_test, y_pred_proba[:,1])
         plt.plot(fpr, tpr)
         plt.show()
 
